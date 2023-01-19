@@ -22,15 +22,16 @@ import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -42,14 +43,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.codelab.basiclayouts.ui.theme.MySootheTheme
-import com.codelab.basiclayouts.ui.theme.shapes
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
 //@Preview(widthDp = 300, heightDp = 300, showBackground = true)
 @Composable
-fun Preview(){
+fun Preview() {
     MySootheTheme {
         SearchBar()
     }
@@ -158,8 +157,8 @@ fun AlignYourBodyRow(
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ){
-        items(alignYourBodyData){ item ->
+    ) {
+        items(alignYourBodyData) { item ->
             AlignYourBodyElement(
                 drawable = item.drawable,
                 text = item.text
@@ -179,7 +178,7 @@ fun FavoriteCollectionsGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.height(120.dp)
-    ){
+    ) {
         items(favoriteCollectionsData) { item ->
             FavoriteCollectionCard(
                 drawable = item.drawable,
@@ -188,6 +187,64 @@ fun FavoriteCollectionsGrid(
             )
         }
     }
+}
+
+@Composable
+fun RecommendationsCard(
+    @DrawableRes drawable: Int,
+    @StringRes text: Int,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        elevation = 12.dp,
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(id = drawable),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.height(100.dp)
+            )
+            Text(
+                text = stringResource(id = text),
+                style = MaterialTheme.typography.h3.copy(fontSize = 12.sp),
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun RecommendationsGrid(modifier: Modifier = Modifier) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier
+    ) {
+        items(favoriteCollectionsData) { item ->
+            RecommendationsCard(
+                drawable = item.drawable,
+                text = item.text,
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun PreviewRecommendationsCard() {
+    RecommendationsCard(
+        drawable = R.drawable.ab1_inversions,
+        text = R.string.ab1_inversions,
+        modifier = Modifier
+    )
 }
 
 // Step: Home section - Slot APIs
@@ -226,6 +283,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             FavoriteCollectionsGrid()
         }
         Spacer(Modifier.height(16.dp))
+        HomeSection(title = R.string.recommendations) {
+            RecommendationsGrid(modifier.height(200.dp))
+        }
+//        Spacer(Modifier.height(16.dp))
     }
 }
 
